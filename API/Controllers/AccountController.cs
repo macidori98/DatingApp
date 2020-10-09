@@ -77,9 +77,33 @@ namespace DatingApp.API.Controllers
             };
         }
 
+        [HttpDelete("delete")]
+        public async Task<ActionResult<bool>> Delete(int id)
+        {
+            var user = await this.context.Users
+                .SingleOrDefaultAsync(x => x.Id == id);
+
+            if (user == null)
+            {
+                return Unauthorized("Invalid id");
+            }
+
+            try
+            {
+                this.context.Users.Remove(user);
+                this.context.SaveChanges();
+                return true;
+            }
+            catch (System.Exception)
+            {
+
+                return false;
+            }
+        }
+
         private async Task<bool> UserExists(string username)
         {
-            return await this.context.Users.AnyAsync(x => x.UserName == username.ToLower());
+            return await this.context.Users.AnyAsync(x => x.UserName.ToLower() == username.ToLower());
         }
 
     }
